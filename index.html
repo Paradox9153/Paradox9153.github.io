@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+background-color: ;
+font-size: 30px;
+text-align: center;
+}
+#sea {
+width: 20px;
+height: 20px;
+background-color: blue;
+margin: 2px;
+line-height: 2px;
+user-select: none;
+
+}
+#button {
+width: 200px;
+height: 200px;
+background-color: black;
+border-radius: 100px;
+margin: 0 auto;
+line-height: 200px;
+user-select: none;
+margin-top: 100px;
+}
+#score {
+margin-top: 50px;
+font-size: 60px;
+font-weight: bold;
+color: grey;
+}
+</style>
+<div id="score">0</div>
+<div id="sea">0</div>
+<div id="button" title="Click" style="cursor:pointer;">5</div>
+
+<script>
+var p1 = 0;
+
+document.getElementById('button').onclick = () => {
+p1 = p1 + 1;
+document.getElementById('score').innerText = p1;
+document.title = p1
+};
+</script>
+</html>
