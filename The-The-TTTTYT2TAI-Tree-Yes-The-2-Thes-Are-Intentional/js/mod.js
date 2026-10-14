@@ -1,9 +1,9 @@
 let modInfo = {
-	name: "TTPTYT2TAI!",
+	name: "TTTTYT2TAI!",
 	id: "9153id",
 	author: "Paradox9153",
 	pointsName: "points",
-	modFiles: ["layers.js", "tree.js","layers/SideLayers.js","layers/Layer2.js","layers/layer1.js"],
+	modFiles: ["tree.js","layers/SideLayers.js","layers/layer1.js","layers/layer2.js"],
 	
 	discordName: "test835",
 	discordLink: "",
@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.5",
-	name: "The Changelog And Dice Update",
+	num: "0.1.0",
+	name: "!!RELEASE!!",
 }
 
 //let changelog = changelog
@@ -44,8 +44,13 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(0)
+	let tidegain = new Decimal(1)
 	if (hasUpgrade('p', 11)) gain = gain.add(1)
 	if (hasUpgrade('p', 12)) gain = gain.times(upgradeEffect('p', 12))
+	if (hasUpgrade('p', 21)) gain = gain.times(upgradeEffect('p', 12))
+	if (hasUpgrade('p', 31)) tidegain = tidegain.add(upgradeEffect('p', 31))
+	if (hasUpgrade('p', 32)) tidegain = tidegain.add(upgradeEffect('p', 32))
+	gain = gain.times(tidegain)	
 	return gain
 }
 

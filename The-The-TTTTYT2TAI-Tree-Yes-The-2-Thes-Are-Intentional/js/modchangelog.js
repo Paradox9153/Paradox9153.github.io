@@ -4,7 +4,19 @@ var changelog =
     `
     <h1>Changelog:</h1><br><br>
 
+	<h3>v0.1.0</h3><br>
+	<h4>Oct 14 2026</h4>
+	!!RELEASE!! 
+	<br>
+	<br>
+	- Made mod public (Technically this happened after 0.0.5)<br>
+	- Added a P* upgrade<br>
+    - Balenced P* and its upgrades Costs and Formulas<br>
+	- Added two P2 upgrade and consiquently two more P* upgrades <br>
+	- Got ⚄ more operational but its still finicky
 	
+	<br><br><br><br>
+
 	<h3>v0.0.5</h3><br>
 	<h4>Oct 14 2026</h4>
 	The Changelog And Dice Update 

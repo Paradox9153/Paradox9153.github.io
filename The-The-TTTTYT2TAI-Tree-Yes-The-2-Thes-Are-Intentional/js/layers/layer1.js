@@ -12,7 +12,7 @@ addLayer("p", {
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.2, // Prestige currency exponent
+    exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('p', 22)) mult = mult.times(upgradeEffect('p', 22))
@@ -21,7 +21,9 @@ addLayer("p", {
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        exp = new Decimal(1)
+        if (hasUpgrade('q', 21)) exp = exp.add(0.1) 
+        return exp
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -38,11 +40,11 @@ addLayer("p", {
     12: {
         title: "Manual Acceleration",
         description: "Boost points gain based on P*",
-        tooltip(){if (options.showAdvancedTooltips) return("x([P*]+1) points per second")},
+        tooltip(){if (options.showAdvancedTooltips) return("x(sqrt(P*) + 1) points per second")},
         unlocked(){return (hasUpgrade(this.layer, 11))},
         cost: new Decimal(1),
          effect() {
-        return player[this.layer].points.add(1)
+        return player[this.layer].points.root(2).add(1)
         },
         effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
     },
@@ -51,9 +53,42 @@ addLayer("p", {
         description: "Boost P* based on points",
         tooltip(){if (options.showAdvancedTooltips) return("x(log2(points)) P* gain")},
         unlocked(){return (hasUpgrade(this.layer, 12))},
-        cost: new Decimal(1),
+        cost: new Decimal(2),
          effect() {
         return player.points.add(1).log(2)
+        },
+        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+    },
+    21: {
+       title: "Clockwise Loop",
+        description: "Boost points based on points",
+        tooltip(){if (options.showAdvancedTooltips) return("x(points^1/4) points gain")},
+        unlocked(){return (hasUpgrade(this.layer, 22))},
+        cost: new Decimal(100),
+         effect() {
+        return player.points.root(4).add(1)
+        },
+        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+    },
+    31: {
+       title: "Low Tide",
+        description: "Boost points based on a low wave in relation to points",
+        tooltip(){if (options.showAdvancedTooltips) return("x(sin(sqrt(x)+π) + 0.25(points^1/4)) points gain")},
+        unlocked(){return (hasUpgrade("q", 12))},
+        cost: new Decimal(25),
+        effect() {
+        return player.points.root(2).add(3.1415).sin().add(player.points.root(10).times(0.25).add(1))
+        },
+        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+    },
+    32: {
+       title: "High Tide",
+        description: "Boost points based on a higher wave in relation to points",
+        tooltip(){if (options.showAdvancedTooltips) return("x(sin(sqrt(x)) + 0.75(points^1/4)) points gain")},
+        unlocked(){return (hasUpgrade("q", 12))},
+        cost: new Decimal(75),
+        effect() {
+        return player.points.root(2).sin().add(player.points.root(10).times(0.75).add(1))
         },
         effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
     },
@@ -80,11 +115,30 @@ addLayer("p", {
             borderStyle() {return {'border-width': "1px"},{'border-radius':"0px"}},
             progress() {return 0.5}
         },
+        //"LTide": {
+        //    direction: UP,
+        //    width: 10,
+        //    height: 80,
+        //    borderStyle() {return {'border-width': "1px"},{'border-radius':"0px"}},
+        //    progress() {return player.points.root(10).add(3.1415).sin().add(1).times(0.5)}
+        //},
+        //"HTide": {
+        //    direction: UP,
+        //    width: 10,
+        //    height: 80,
+        //    borderStyle() {return {'border-width': "1px"},{'border-radius':"0px"}},
+        //    progress() {return player.points.root(10).sin().add(1).times(0.5)}
+        //},
     },
     tabFormat: {
         "Main": {
             content:[
-            "main-display","prestige-button","blank","resource-display","blank","h-line","blank","upgrades","blank",
+            "main-display","prestige-button","blank","resource-display","blank","h-line","blank",
+            //["row",[["upgrade","11"],["upgrade","12"]]],
+            //["row",[["upgrade","21"],["upgrade","22"]]],
+            //["row",[["bar","LTide"],["upgrade","31"],["upgrade","32"],["bar","HTide"]]],
+            "upgrades",
+            "blank",
             ]
         },
         "Milestone": {

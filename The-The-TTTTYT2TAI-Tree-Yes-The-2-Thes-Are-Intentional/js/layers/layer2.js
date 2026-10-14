@@ -7,14 +7,14 @@ addLayer("q", {
 		points: new Decimal(0),
     }},
     color: "#8400ffff",
-    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    requires: new Decimal(1000), // Can be a function that takes requirement increases into account
+    base: new Decimal (10),
     resource: "P2", // Name of prestige currency
     baseResource: "P*", // Name of resource prestige is based on
     baseAmount() {return player["p"].points}, // Get the current amount of baseResource
     branches: ["p"],
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     canBuyMax: true,
-    requires: 1000,
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
@@ -29,9 +29,21 @@ addLayer("q", {
     upgrades: {
     11: {
         title: "Another Begining",
-        description: "Multiply P* points",
+        description: "Multiply P* points<br>x4",
         tooltip(){if (options.showAdvancedTooltips) return("x4 P* gain")},
         cost: new Decimal(1),
+    },
+    12: {
+        title: "More To See",
+        description: "Unlock More P* Upgrade",
+        tooltip(){if (options.showAdvancedTooltips) return("Unlock 3rd Row of P* Upgrades")},
+        cost: new Decimal(10),
+    },
+    21: {
+        title: "Higher Power",
+        description: "Slightly Boost P*s gain exponent<br>+^0.1",
+        tooltip(){if (options.showAdvancedTooltips) return("+^0.1 P* gain")},
+        cost: new Decimal(20),
     },
     },
 }),
@@ -41,18 +53,19 @@ addLayer("ran", {
     position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-		points: new Decimal(10),
+		points: new Decimal(0),
         dicetimer: new Decimal(10),
         last_roll: new Decimal(0)
     }},
     color: "#ff8080",
     resource: "⚄ units", // Name of prestige currency
-    baseResource: "P*",
-    baseAmount() {return player["p"].points},
+    baseResource: "P2",
+    baseAmount() {return player["q"].points},
     branches: ["q"],
-    requires: new Decimal(1),
+    requires: new Decimal(25),
+    exponent: 1,
     type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    layerShown(){return (player["q"].total.gte(2))},
+    layerShown(){return (player["q"].total.gte(20))},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -63,7 +76,10 @@ addLayer("ran", {
     row: 1, 
     resetsNothing() {return false},
 
-    update(diff) {if (player[this.layer].dicetimer>0) player[this.layer].dicetimer = Math.max(0, player[this.layer].dicetimer - diff) },
+    update(diff) {
+    if (player[this.layer].dicetimer>0) player[this.layer].dicetimer = Math.max(0, player[this.layer].dicetimer - diff) 
+    if (player["q"].points.gte(25)) player.ran.unlocked = true
+    },
     clickables: {
     11: {
         display() {return "Click to roll Dice \n\n" + Math.ceil(player[this.layer].dicetimer) + "s"},
