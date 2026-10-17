@@ -4,6 +4,19 @@ var changelog =
     `
     <h1>Changelog:</h1><br><br>
 
+	<h3>v0.1.1</h3><br>
+	<h4>Oct 16 2026</h4>
+	Dices Onions or Something 
+	<br>
+	<br>
+	- Added two dice upgrades<br>
+	- Added rolling multiple dice<br>
+	- Hid "???" node<br>
+	- also the roll timer will be longer later but its short for testing purposes
+
+	
+	<br><br><br><br>
+
 	<h3>v0.1.0</h3><br>
 	<h4>Oct 14 2026</h4>
 	!!RELEASE!! 

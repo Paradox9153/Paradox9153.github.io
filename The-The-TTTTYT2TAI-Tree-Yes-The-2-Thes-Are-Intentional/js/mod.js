@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.0",
-	name: "!!RELEASE!!",
+	num: "0.1.1",
+	name: "Dices Onions or Something",
 }
 
 //let changelog = changelog
@@ -27,7 +27,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything","rollDice"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -85,3 +85,19 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
 }
+
+function rollDice(n,dicemult) {
+    let rolls = []
+	let rollSum = 0
+	let rollText = ""
+	let rollTextS = ""
+    for (let i = 0; i < n; i++){
+		let rollVal = (Math.floor(Math.random() * 6) + 1)*dicemult
+        rolls.push(rollVal)
+		rollSum = rollSum + rollVal
+		if (i>0) rollText = rollText + " + "
+		rollText = `${rollText + rollVal}`
+        }
+	if (n>1) rollTextS = "s"
+    return [rolls,rollSum,rollText,rollTextS]
+    }

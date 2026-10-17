@@ -11,7 +11,7 @@ addLayer("Test", {
     type:"none",
     resource:"H",
     row: "side", // Row the layer is in on the tree (0 is the first row)
-    layerShown(){return true},
+    layerShown(){return false},
     upgrades: {
     11: {
         title: "Reset",
