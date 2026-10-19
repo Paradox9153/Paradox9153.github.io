@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1",
-	name: "Dices Onions or Something",
+	num: "0.1.2",
+	name: "Small things mostly",
 }
 
 //let changelog = changelog
@@ -44,13 +44,16 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(0)
-	let tidegain = new Decimal(1)
+	let tidegain = new Decimal(1) 
+
 	if (hasUpgrade('p', 11)) gain = gain.add(1)
 	if (hasUpgrade('p', 12)) gain = gain.times(upgradeEffect('p', 12))
-	if (hasUpgrade('p', 21)) gain = gain.times(upgradeEffect('p', 12))
+	if (hasUpgrade('p', 21)) gain = gain.times(upgradeEffect('p', 21))
 	if (hasUpgrade('p', 31)) tidegain = tidegain.add(upgradeEffect('p', 31))
 	if (hasUpgrade('p', 32)) tidegain = tidegain.add(upgradeEffect('p', 32))
 	gain = gain.times(tidegain)	
+
+	if (hasUpgrade('q', 12)) gain = gain.times(upgradeEffect('q', 12))
 	return gain
 }
 
@@ -88,16 +91,19 @@ function fixOldSave(oldVersion){
 
 function rollDice(n,dicemult) {
     let rolls = []
-	let rollSum = 0
+	let rollSum1 = 0
+	let rollSum2 = 0
 	let rollText = ""
 	let rollTextS = ""
     for (let i = 0; i < n; i++){
-		let rollVal = (Math.floor(Math.random() * 6) + 1)*dicemult
-        rolls.push(rollVal)
-		rollSum = rollSum + rollVal
+		let rollVal = (Math.floor(Math.random() * 6) + 1)
+		let fullRollVal = rollVal*dicemult
+        rolls.push(fullRollVal)
+		rollSum1 = rollSum1 + rollVal
+		rollSum2 = rollSum2 + fullRollVal
 		if (i>0) rollText = rollText + " + "
 		rollText = `${rollText + rollVal}`
         }
 	if (n>1) rollTextS = "s"
-    return [rolls,rollSum,rollText,rollTextS]
+    return [rolls,[rollSum1,rollSum2],rollText,rollTextS]
     }

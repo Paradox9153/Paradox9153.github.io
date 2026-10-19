@@ -34,8 +34,18 @@ addLayer("q", {
         cost: new Decimal(1),
     },
     12: {
+        title: "Backwards Help",
+        description: "Boost points gain",
+        tooltip(){if (options.showAdvancedTooltips) return("x(P2/5)+1 points gain")},
+        cost: new Decimal(3),
+        effect() {
+        return player[this.layer].points.div(5).add(1)
+        },
+        effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
+    },
+    13: {
         title: "More To See",
-        description: "Unlock More P* Upgrade",
+        description: "Unlock More P* Upgrades",
         tooltip(){if (options.showAdvancedTooltips) return("Unlock 3rd Row of P* Upgrades")},
         cost: new Decimal(10),
     },
@@ -45,6 +55,28 @@ addLayer("q", {
         tooltip(){if (options.showAdvancedTooltips) return("+^0.1 P* gain")},
         cost: new Decimal(20),
     },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "5 P2",
+            effectDescription: "Gain 1% Of P* Automatically",
+            done() {return player[this.layer].points.gte(5) },
+            style(){return{"width":"45vw"}},
+        },
+    },
+    tabFormat: {
+        "Main": {
+            content:[
+            "main-display","prestige-button","blank","resource-display","blank","h-line","blank",
+            "upgrades",
+            "blank",
+            ]
+        },
+        "Milestones": {
+            content:[
+            "milestones",
+            ]
+        },
     },
 }),
 
@@ -87,15 +119,15 @@ addLayer("ran", {
     
     clickables: {
     11: {
-        display() {return "Click to roll Dice \n\n" + Math.ceil(player[this.layer].dicetimer) + "s"},
+        display() {return `Click to roll Dice <br><br>${Math.ceil(player[this.layer].dicetimer)}s`},
         effect() {
             return 0
         },
         canClick() {return (player[this.layer].dicetimer == 0)},
         onClick() {
-            player[this.layer].dicetimer = Math.max(0,player[this.layer].dicetimer + 1),
+            player[this.layer].dicetimer = Math.max(0,player[this.layer].dicetimer + 10),
             player[this.layer].last_roll = rollDice(diceCount,mult)
-            player[this.layer].points = player[this.layer].points.add(player[this.layer].last_roll[1])
+            player[this.layer].points = player[this.layer].points.add(player[this.layer].last_roll[1][1])
         },
     },
     },
@@ -125,13 +157,14 @@ addLayer("ran", {
             ["display-text",
             function() {return `Last roll${player[this.layer].last_roll[3]} ${player[this.layer].last_roll[2]}`}
             ],
+            "blank",
             ["display-text",
-            function() {return `+${player[this.layer].last_roll[1]} ⚄ units`}
+            function() {return `+${player[this.layer].last_roll[1][0]} x ${mult}`}
             ],
             ["display-text",
-            function() {return 'test is ' + format(player[this.layer].last_roll) + 'x'}
+            function() {return `+${player[this.layer].last_roll[1][1]} ⚄ units`}
             ],
-            "blank","h-line","blank",["clickable","11",{'width': '200px', 'height': '200px'}],"blank","upgrades",
+            "blank","h-line","blank",["clickable","11",{'width': '200px', 'height': '200px','font-size':'14px'}],"blank","upgrades",
             ]
         },
     },   

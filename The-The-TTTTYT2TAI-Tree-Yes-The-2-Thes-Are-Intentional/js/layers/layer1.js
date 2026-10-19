@@ -30,6 +30,12 @@ addLayer("p", {
         {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
+    passiveGeneration() {
+        passiveGenGain = new Decimal(0)
+        if(hasMilestone("q",0)) passiveGenGain = passiveGenGain.add(0.01)
+        return passiveGenGain
+    },
+
     upgrades: {
     11: {
         title: "Start From Zero",
@@ -43,7 +49,7 @@ addLayer("p", {
         tooltip(){if (options.showAdvancedTooltips) return("x(sqrt(P*) + 1) points per second")},
         unlocked(){return (hasUpgrade(this.layer, 11))},
         cost: new Decimal(1),
-         effect() {
+        effect() {
         return player[this.layer].points.root(2).add(1)
         },
         effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -54,7 +60,7 @@ addLayer("p", {
         tooltip(){if (options.showAdvancedTooltips) return("x(log2(points)) P* gain")},
         unlocked(){return (hasUpgrade(this.layer, 12))},
         cost: new Decimal(2),
-         effect() {
+        effect() {
         return player.points.add(1).log(2)
         },
         effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
@@ -65,7 +71,7 @@ addLayer("p", {
         tooltip(){if (options.showAdvancedTooltips) return("x(points^1/4) points gain")},
         unlocked(){return (hasUpgrade(this.layer, 22))},
         cost: new Decimal(100),
-         effect() {
+        effect() {
         return player.points.root(4).add(1)
         },
         effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
@@ -74,8 +80,8 @@ addLayer("p", {
        title: "Low Tide",
         description: "Boost points based on a low wave in relation to points",
         tooltip(){if (options.showAdvancedTooltips) return("x(sin(sqrt(x)+π) + 0.25(points^1/4)) points gain")},
-        unlocked(){return (hasUpgrade("q", 12))},
-        cost: new Decimal(25),
+        unlocked(){return (hasUpgrade("q", 13))},
+        cost: new Decimal(2500),
         effect() {
         return player.points.root(2).add(3.1415).sin().add(player.points.root(10).times(0.25).add(1))
         },
@@ -85,8 +91,8 @@ addLayer("p", {
        title: "High Tide",
         description: "Boost points based on a higher wave in relation to points",
         tooltip(){if (options.showAdvancedTooltips) return("x(sin(sqrt(x)) + 0.75(points^1/4)) points gain")},
-        unlocked(){return (hasUpgrade("q", 12))},
-        cost: new Decimal(75),
+        unlocked(){return (hasUpgrade("q", 13))},
+        cost: new Decimal(75000),
         effect() {
         return player.points.root(2).sin().add(player.points.root(10).times(0.75).add(1))
         },
@@ -141,7 +147,7 @@ addLayer("p", {
             "blank",
             ]
         },
-        "Milestone": {
+        "Milestones": {
             content:[
             ["bar","P*MileBar"],"blank","best-display","blank",
             "milestones",

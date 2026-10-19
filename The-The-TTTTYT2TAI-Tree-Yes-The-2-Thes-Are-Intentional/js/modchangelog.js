@@ -4,6 +4,19 @@ var changelog =
     `
     <h1>Changelog:</h1><br><br>
 
+	<h3>v0.1.2</h3><br>
+	<h4>Oct 16 2026</h4>
+	Small things mostly 
+	<br>
+	<br>
+	- Changed dice's "Last Roll" display<br>
+	- Fixed a typo in P2<br>
+	- Added a P2 milestone<br>
+	- tried to rebalence P* again
+
+	
+	<br><br><br><br>
+
 	<h3>v0.1.1</h3><br>
 	<h4>Oct 16 2026</h4>
 	Dices Onions or Something 
