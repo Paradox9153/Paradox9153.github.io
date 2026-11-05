@@ -125,8 +125,8 @@ addLayer("ran", {
         },
         canClick() {return (player[this.layer].dicetimer == 0)},
         onClick() {
-            player[this.layer].dicetimer = Math.max(0,player[this.layer].dicetimer + 10),
-            player[this.layer].last_roll = rollDice(diceCount,mult)
+            player[this.layer].dicetimer = Math.max(0,player[this.layer].dicetimer + 10)
+            player[this.layer].last_roll = rollDice(diceCount,tmp["ran"].gainMult)
             player[this.layer].points = player[this.layer].points.add(player[this.layer].last_roll[1][1])
         },
     },
@@ -159,7 +159,7 @@ addLayer("ran", {
             ],
             "blank",
             ["display-text",
-            function() {return `+${player[this.layer].last_roll[1][0]} x ${mult}`}
+            function() {return `+${player[this.layer].last_roll[1][0]} x ${tmp["ran"].gainMult}`}
             ],
             ["display-text",
             function() {return `+${player[this.layer].last_roll[1][1]} ⚄ units`}
@@ -167,5 +167,116 @@ addLayer("ran", {
             "blank","h-line","blank",["clickable","11",{'width': '200px', 'height': '200px','font-size':'14px'}],"blank","upgrades",
             ]
         },
-    },   
+    },  
+    
+    doReset(resettingLayer){
+        if (resettingLayer == "tag") {
+
+            layerDataReset(this.layer)
+
+        } else {
+            if (layers[resettingLayer].row <= layers[this.layer].row) return;
+        }
+    }
+
+}),
+
+addLayer("tag", {
+    name: "tag", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "🏷", // This appears on the layer's node. Default is the id with the first letter capitalized
+    // nodeStyle: {'color':"rgba(0, 0, 0, 0.8)"},
+    position: 5, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+        tags: ["0"]
+    }},
+    color: "#c2578e",
+    resource: "Tags", // Name of prestige currency
+    baseResource: "⚄ units",
+    baseAmount() {return player["ran"].points},
+    branches: ["ran"],
+    requires: new Decimal(25),
+    exponent: 1,
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    layerShown(){return (player["q"].total.gte(15))},
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainDiceCount() { // Calculate Dice amount
+    },
+    row: 1, 
+    resetsNothing() {return false},
+    
+    upgrades: {
+        "tree_1_3": {
+            title: "Broken Star",
+            description: "Unlock more P* upgrades and 🏷 doesn't reset P*",
+            tooltip(){if (options.showAdvancedTooltips) return("4th Row of P* Upgrades<br>🏷 doesnt reset P*")},
+            unlocked(){return true},
+            cost: new Decimal(10),
+            effect() {
+            return 0
+            },
+            effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+        },
+        "tree_2_2": {
+            title: "This Upgrade does nothing",
+            description: "",
+            tooltip(){if (options.showAdvancedTooltips) return("what did you expect")},
+            unlocked(){return true},
+            style(){},
+            canAfford(){return (hasUpgrade(this.layer, "tree_1_3"))},
+            cost: new Decimal(9999),
+            effect() {
+            return 0
+            },
+            effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+            branches(){
+                if (hasUpgrade(this.layer, "tree_1_3")) {
+                    return [["tree_1_3","white"]]
+                } else return [["tree_1_3","hsl(0, 10%, 60%)"]]
+            },
+        },
+        "tree_2_3": {
+            title: "This Upgrade does nothing",
+            description: "",
+            tooltip(){if (options.showAdvancedTooltips) return("hi o/")},
+            unlocked(){return true},
+            style(){},
+            canAfford(){return (hasUpgrade(this.layer, "tree_2_2"))},
+            cost: new Decimal(9999),
+            effect() {
+            return 0
+            },
+            effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+            branches(){
+                if (hasUpgrade(this.layer, "tree_2_2")) {
+                    return [["tree_2_2","white"]]
+                } else return [["tree_2_2","hsl(0, 10%, 60%)"]]
+            },
+        },
+    },
+
+    prestigeButtonText(){return `
+        ${player["tag"].points.lt(1e3) ? "Reset for " : ""}+<b>${formatWhole(tmp["tag"].resetGain)}</b> Tag units!${player["tag"].points.lt(1e3) ? `<br><br>Next at ${(tmp["tag"].roundUpCost ? formatWhole(tmp["tag"].nextAt) : format(tmp["tag"].nextAt))} ${tmp["tag"].baseResource}` : ""}
+        `
+    },
+    microtabs: {
+        stuff: {
+            "Tree" : {
+                content: createBadGrid(5,5,"tree",["1_3","2_2","2_3"]) //createBadGrid's ids must be sorted because im lazy
+            }
+        }    
+    },
+    tabFormat: {
+        "Main": {
+            content:[
+            "main-display","prestige-button","blank","resource-display","blank","h-line","blank",
+            ["microtabs","stuff"],
+            "blank",
+            ]
+        },
+    },
 })

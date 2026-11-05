@@ -4,6 +4,52 @@ var changelog =
     `
     <h1>Changelog:</h1><br><br>
 
+	<h3>v1.1.3</h3><br>
+	<h4>Oct 26 2026</h4>
+	The One That Added Bad Grids 
+	<br>
+	<br>
+	- Finished implementing Tag microtab system<br>
+	- Made Tag reset Dice as it should <br>
+	- Started adding Tag upgrades
+
+	
+	<br><br><br><br>
+
+	<h3>v1.1.2</h3><br>
+	<h4>Oct 26 2026</h4>
+	This one counts better 
+	<br>
+	<br>
+	- Worked on Tag concept and microtabs<br>
+	- Updated changelog versioning to align with a <br>
+	"Major Update . Node or Other Feature . Small Updates" <br>
+	system
+
+	
+	<br><br><br><br>
+
+	<h3>v0.1.3.1</h3><br>
+	<h4>Oct 26 2026</h4>
+	This one doesnt count 
+	<br>
+	<br>
+	- Worked on Tag upgrades
+
+	
+	<br><br><br><br>
+
+	<h3>v0.1.3</h3><br>
+	<h4>Oct 22 2026</h4>
+	Tagged I Guess 
+	<br>
+	<br>
+	- Added Tag Node<br>
+	- (thats it. i spent too long figuring out the presteige button)
+
+	
+	<br><br><br><br>
+
 	<h3>v0.1.2</h3><br>
 	<h4>Oct 16 2026</h4>
 	Small things mostly 
@@ -12,7 +58,7 @@ var changelog =
 	- Changed dice's "Last Roll" display<br>
 	- Fixed a typo in P2<br>
 	- Added a P2 milestone<br>
-	- tried to rebalence P* again
+	- Tried to rebalence P* again
 
 	
 	<br><br><br><br>

@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.2",
-	name: "Small things mostly",
+	num: "1.1.3",
+	name: "The One That Added Bad Grids",
 }
 
 //let changelog = changelog
@@ -27,7 +27,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything","rollDice"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything","rollDice","createBadGrid"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -62,7 +62,7 @@ function addedPlayerData() { return {
 }}
 
 // Display extra things at the top of the page
-var displayThings = [
+var displayThings = [`${player.points}`
 ]
 
 // Determines when the game "ends"
@@ -106,4 +106,42 @@ function rollDice(n,dicemult) {
         }
 	if (n>1) rollTextS = "s"
     return [rolls,[rollSum1,rollSum2],rollText,rollTextS]
-    }
+}
+
+function createBadGrid(width,height,prefix,ids) {
+	let text = "["
+	let gridSize = width * height
+	let idRow = []
+	let idCol = []
+	for (let i = 0; i < ids.length; i++){
+		let idBoth = ids[i].split("_")
+		idRow.push(idBoth[0])
+		idCol.push(idBoth[1])
+	}
+	if (idRow.toSorted().toReversed()[0]>width||idCol.toSorted().toReversed()[0]>height){return "table too small"}
+	
+	let idListIndex = 0
+	for (let i = 0; i < gridSize; i++){
+		
+		if (i%width == 0){
+			text = text + `["row",[["blank",["17px","120px"]],`
+		}
+
+		if ((Math.floor(i/width)+1 == idRow[idListIndex])&&(i%width+1 == idCol[idListIndex])){
+			text = text + `["upgrade","${prefix}_${idRow[idListIndex]}_${idCol[idListIndex]}"]`
+			idListIndex = idListIndex + 1
+		} else {
+			text = text + `["blank",["120px","120px"]]`
+		}
+
+		text = text + `,["blank",["17px","120px"]]`
+
+		if (i%width == 4){
+			text = text + `]],"blank"`
+		}
+		text = text + ","
+	}
+	text = text.slice(0,-1) + "]"
+
+	return JSON.parse(text)
+}

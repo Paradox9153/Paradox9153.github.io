@@ -156,7 +156,8 @@ addLayer("p", {
     },
     doReset(resettingLayer){
         if (layers[resettingLayer].row <= layers[this.layer].row) return;
-        
+        if (resettingLayer == "tag" && hasUpgrade('tag', "tree_1_3")) return;
+
         let keepS = [player[this.layer].best]
 
         let keepU = []
