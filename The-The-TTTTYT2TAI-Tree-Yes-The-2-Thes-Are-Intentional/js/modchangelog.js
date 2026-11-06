@@ -5,7 +5,7 @@ var changelog =
     <h1>Changelog:</h1><br><br>
 
 	<h3>v1.1.3</h3><br>
-	<h4>Oct 26 2026</h4>
+	<h4>Nov 5 2026</h4>
 	The One That Added Bad Grids 
 	<br>
 	<br>
