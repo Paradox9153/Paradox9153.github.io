@@ -5,6 +5,8 @@ addLayer("q", {
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
+        best: new Decimal(0),
+        sequels: new Decimal(0),
     }},
     color: "#8400ffff",
     requires: new Decimal(1000), // Can be a function that takes requirement increases into account
@@ -26,6 +28,15 @@ addLayer("q", {
     row: 1, 
     resetsNothing() {return false},
     layerShown(){return true},
+
+    update(diff){
+        if(hasUpgrade("tag","tree_2_2")){
+            let seqGain= new Decimal(0)
+            seqGain=seqGain.add(player["q"].points)
+            player["q"].sequels = player["q"].sequels.add(seqGain.times(diff))
+        }
+    },
+
     upgrades: {
     11: {
         title: "Another Begining",
@@ -35,11 +46,11 @@ addLayer("q", {
     },
     12: {
         title: "Backwards Help",
-        description: "Boost points gain",
+        description: "Boost points gain based on best P2",
         tooltip(){if (options.showAdvancedTooltips) return("x(P2/5)+1 points gain")},
         cost: new Decimal(3),
         effect() {
-        return player[this.layer].points.div(5).add(1)
+        return player[this.layer].best.div(5).add(1)
         },
         effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, 
     },
@@ -67,7 +78,12 @@ addLayer("q", {
     tabFormat: {
         "Main": {
             content:[
-            "main-display","prestige-button","blank","resource-display","blank","h-line","blank",
+            "main-display",
+            ["display-text",
+            function() {return `${hasUpgrade("tag", "tree_2_2") ? `You have ${format(player[this.layer].sequels)} sequels which boost points by x${format(player[this.layer].sequels.divide(100).add(1))}`:""}`}
+            ],
+            function() {if(hasUpgrade("tag", "tree_2_2")){return "blank"}},
+            "prestige-button","blank","resource-display","blank","h-line","blank",
             "upgrades",
             "blank",
             ]
@@ -98,7 +114,7 @@ addLayer("ran", {
     requires: new Decimal(25),
     exponent: 1,
     type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    layerShown(){return (player["q"].total.gte(15))},
+    layerShown(){return (player["q"].total.gte(15) || player["ran"].unlocked == true)},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('ran', 11)) mult = mult.times(2)
@@ -111,15 +127,24 @@ addLayer("ran", {
     },
     row: 1, 
     resetsNothing() {return false},
+    
 
     update(diff) {
     if (player[this.layer].dicetimer>0) player[this.layer].dicetimer = Math.max(0, player[this.layer].dicetimer - diff) 
-    if (player["q"].points.gte(25)) player.ran.unlocked = true
+    },
+
+    automate(){
+        if (player["q"].points.gte(25)) player["ran"].unlocked = true 
+        if (hasUpgrade("tag","tree_2_3") && (player[this.layer].dicetimer == 0)){
+            player[this.layer].dicetimer = Math.max(0,player[this.layer].dicetimer + 10)
+            player[this.layer].last_roll = rollDice(diceCount,tmp["ran"].gainMult)
+            addPoints("ran",player[this.layer].last_roll[1][1])
+        }
     },
     
     clickables: {
     11: {
-        display() {return `Click to roll Dice <br><br>${Math.ceil(player[this.layer].dicetimer)}s`},
+        display() {return `Click to roll Dice <br><br>${format(player[this.layer].dicetimer)}s`},
         effect() {
             return 0
         },
@@ -127,7 +152,7 @@ addLayer("ran", {
         onClick() {
             player[this.layer].dicetimer = Math.max(0,player[this.layer].dicetimer + 10)
             player[this.layer].last_roll = rollDice(diceCount,tmp["ran"].gainMult)
-            player[this.layer].points = player[this.layer].points.add(player[this.layer].last_roll[1][1])
+            addPoints("ran",player[this.layer].last_roll[1][1])
         },
     },
     },
@@ -154,6 +179,9 @@ addLayer("ran", {
         "Main": {
             content:[
             "main-display",
+            //["display-text",
+            //function() {return `t${player[this.layer].total} b${player[this.layer].best}`}
+            //],
             ["display-text",
             function() {return `Last roll${player[this.layer].last_roll[3]} ${player[this.layer].last_roll[2]}`}
             ],
@@ -167,7 +195,13 @@ addLayer("ran", {
             "blank","h-line","blank",["clickable","11",{'width': '200px', 'height': '200px','font-size':'14px'}],"blank","upgrades",
             ]
         },
-    },  
+    },
+
+    glowColor:"#a0404080",
+    shouldNotify(){
+        return (player[this.layer].dicetimer == 0 && !hasUpgrade("tag","tree_2_3"))
+    },
+      
     
     doReset(resettingLayer){
         if (resettingLayer == "tag") {
@@ -199,7 +233,7 @@ addLayer("tag", {
     requires: new Decimal(25),
     exponent: 1,
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    layerShown(){return (player["q"].total.gte(15))},
+    layerShown(){return (player["ran"].total.gte(100) || player["tag"].unlocked == true)},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -215,24 +249,20 @@ addLayer("tag", {
             description: "Unlock more P* upgrades and 🏷 doesn't reset P*",
             tooltip(){if (options.showAdvancedTooltips) return("4th Row of P* Upgrades<br>🏷 doesnt reset P*")},
             unlocked(){return true},
-            cost: new Decimal(10),
-            effect() {
-            return 0
-            },
-            effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+            cost: new Decimal(10)
         },
         "tree_2_2": {
-            title: "This Upgrade does nothing",
-            description: "",
-            tooltip(){if (options.showAdvancedTooltips) return("what did you expect")},
+            title: "Its Not A Sequel, OK?",
+            description: "P2s generate Sequels",
+            tooltip(){if (options.showAdvancedTooltips) return("+P2 sequels/sec")},
             unlocked(){return true},
             style(){},
             canAfford(){return (hasUpgrade(this.layer, "tree_1_3"))},
-            cost: new Decimal(9999),
+            cost: new Decimal(1),
             effect() {
-            return 0
+            return (player["q"].points)
             },
-            effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+            effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id))+"/sec" },
             branches(){
                 if (hasUpgrade(this.layer, "tree_1_3")) {
                     return [["tree_1_3","white"]]
@@ -240,17 +270,13 @@ addLayer("tag", {
             },
         },
         "tree_2_3": {
-            title: "This Upgrade does nothing",
-            description: "",
-            tooltip(){if (options.showAdvancedTooltips) return("hi o/")},
+            title: "Infinite Fall",
+            description: "Automatically roll Dice",
+            tooltip(){if (options.showAdvancedTooltips) return("this thing rolls your dice -> o/")},
             unlocked(){return true},
             style(){},
             canAfford(){return (hasUpgrade(this.layer, "tree_2_2"))},
-            cost: new Decimal(9999),
-            effect() {
-            return 0
-            },
-            effectDisplay() { return "+"+format(upgradeEffect(this.layer, this.id)) },
+            cost: new Decimal(1),
             branches(){
                 if (hasUpgrade(this.layer, "tree_2_2")) {
                     return [["tree_2_2","white"]]

@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1.3",
-	name: "The One That Added Bad Grids",
+	num: "1.1.4",
+	name: "Sequels and this thing -> o/",
 }
 
 //let changelog = changelog
@@ -54,6 +54,7 @@ function getPointGen() {
 	gain = gain.times(tidegain)	
 
 	if (hasUpgrade('q', 12)) gain = gain.times(upgradeEffect('q', 12))
+	if (player["q"].sequels.gte(1)) gain = gain.times(player["q"].sequels.divide(100).add(1))
 	return gain
 }
 

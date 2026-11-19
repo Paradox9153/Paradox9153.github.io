@@ -4,6 +4,20 @@ var changelog =
     `
     <h1>Changelog:</h1><br><br>
 
+	<h3>v1.1.4</h3><br>
+	<h4>Nov 18 2026</h4>
+	Sequels and this thing -> o/ 
+	<br>
+	<br>
+	- Implemented sequels and autorolling<br>
+	- Added glow when Dice is ready<br>
+	- Fixed layer unlocking<br>
+	- Fixed how Dice added ⚄ units<br>
+	- (i still will have to update prices an slightly boost early game)
+
+
+	<br><br><br><br>
+
 	<h3>v1.1.3</h3><br>
 	<h4>Nov 5 2026</h4>
 	The One That Added Bad Grids 
